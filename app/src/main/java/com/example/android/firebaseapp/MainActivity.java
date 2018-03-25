@@ -1,5 +1,6 @@
 package com.example.android.firebaseapp;
 
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -10,9 +11,9 @@ import android.widget.Toast;
 import com.firebase.client.Firebase;
 
 public class MainActivity extends AppCompatActivity {
-    EditText myEditText;
+    EditText myEditText,myKeyValue;
     Button myApplyBt;
-    String myStringData;
+    String myStringData,myKeyValueData;
 
 
 
@@ -25,21 +26,22 @@ public class MainActivity extends AppCompatActivity {
 
 
         myEditText =(EditText) findViewById(R.id.editText);
+        myKeyValue =(EditText) findViewById(R.id.editText2);
         myApplyBt =(Button) findViewById(R.id.button);
-
-
-
         Firebase.setAndroidContext(this);
-        myFireBase = new Firebase("https://fir-app-760a1.firebaseio.com");
+        String DeviceID = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        myFireBase = new Firebase("https://fir-app-760a1.firebaseio.com/Users"+DeviceID);
 
         myApplyBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                myKeyValueData = myKeyValue.getText().toString();
                 myStringData = myEditText.getText().toString();
-              Firebase myNewChild=myFireBase.child("ChildName");
+              Firebase myNewChild=myFireBase.child(myKeyValueData);
               myNewChild.setValue(myStringData);
-                Toast.makeText(MainActivity.this,"child updated with"+myStringData,Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,myStringData+" is updated with"+myKeyValueData,Toast.LENGTH_SHORT).show();
+
             }
         });
         }
